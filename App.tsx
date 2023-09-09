@@ -1,117 +1,114 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {StyleSheet, View, Button, Text} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
+interface HeaderProps {
   title: string;
-}>;
+}
+interface CellProps {
+  dayNum: number;
+}
+interface TableProps {
+  monthNum: number;
+}
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+// ヘッダー
+const Header: React.FC<HeaderProps> = ({title}) => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.header}>
+      <Text>{title}</Text>
     </View>
   );
-}
+};
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+// Cell
+const Cell: React.FC<CellProps> = ({dayNum}) => {
+  return (
+    <View style={styles.cell}>
+      <Button title={`${dayNum}`} />
+    </View>
+  );
+};
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+// // Table
+// const Talbe: React.FC<TableProps> = ({mounthNum}) => {
+//   return (
+//     <View style={styles.table}>
+//       {/* 6回繰り返す */}
+//       {Array.from({length: 6}).map((_, rowIndex) => (
+//         <View style={styles.row} key={rowIndex}>
+//           {/* 月〜金まで繰り返す */}
+//           {Array.from({length: 7}).map((_, colIndex) => (
+//             <Cell dayNum={rowIndex * 7 + colIndex + 1} />
+//           ))}
+//         </View>
+//       ))}
+//     </View>
+//   );
+// };
+
+const getDaysInMonth = (month: number) => {
+  const date = new Date(2023, month, 0);
+  return date.getDate();
+};
+
+const Table: React.FC<TableProps> = ({monthNum}) => {
+  const daysInMonth = getDaysInMonth(monthNum);
+  const weeks = Math.ceil(daysInMonth / 7);
+  let nextMonthDay = 1;
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step ddd">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <View style={styles.table}>
+      {Array.from({length: weeks}).map((_, rowIndex) => (
+        <View style={styles.row} key={rowIndex}>
+          {Array.from({length: 7}).map((_, colIndex) => {
+            const dayNum = rowIndex * 7 + colIndex + 1;
+
+            if (dayNum <= daysInMonth) {
+              return <Cell dayNum={dayNum} key={colIndex} />;
+            } else {
+              return <Cell dayNum={nextMonthDay++} key={colIndex} />;
+            }
+          })}
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      ))}
+    </View>
   );
-}
+};
+
+const App = () => {
+  return (
+    <View style={styles.container}>
+      <Header title="My Header" />
+      <Table monthNum={9} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: 'red',
+    display: 'flex',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  header: {
+    padding: 8,
+    backgroundColor: 'blue',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  table: {
+    flex: 1,
+    backgroundColor: 'black',
   },
-  highlight: {
-    fontWeight: '700',
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'yellow',
+  },
+  cell: {
+    flex: 1,
+    margin: 3,
+    borderWidth: 1,
+    backgroundColor: 'white',
   },
 });
 
