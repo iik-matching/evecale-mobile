@@ -1,9 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Button, Text} from 'react-native';
+import Header from './components/Header';
 
-interface HeaderProps {
-  title: string;
-}
 interface CellProps {
   dayNum: number;
 }
@@ -14,15 +12,6 @@ interface TableProps {
 
 const handleButtonPress = () => {
   console.log('ボタンが押されました');
-};
-
-// ヘッダー
-const Header: React.FC<HeaderProps> = ({title}) => {
-  return (
-    <View style={styles.header}>
-      <Text>{title}</Text>
-    </View>
-  );
 };
 
 // Cell
@@ -70,6 +59,16 @@ const Table: React.FC<TableProps> = ({year, month}) => {
 
   return (
     <View style={styles.table}>
+      <View style={styles.rowYoubi}>
+        <Text style={styles.cellYoubi}>月</Text>
+        <Text style={styles.cellYoubi}>火</Text>
+        <Text style={styles.cellYoubi}>水</Text>
+        <Text style={styles.cellYoubi}>木</Text>
+        <Text style={styles.cellYoubi}>金</Text>
+        <Text style={styles.cellYoubi}>土</Text>
+        <Text style={styles.cellYoubi}>日</Text>
+      </View>
+      {/* 6週繰り返す */}
       {Array.from({length: weeks}).map((_, rowIndex) => (
         <View style={styles.row} key={rowIndex}>
           {Array.from({length: 7}).map((_, colIndex) => {
@@ -103,28 +102,30 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: 'red',
+    padding: 5,
     display: 'flex',
-  },
-  header: {
-    padding: 8,
-    backgroundColor: 'blue',
   },
   table: {
     flex: 1,
-    backgroundColor: 'black',
   },
   row: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'yellow',
   },
   cell: {
     flex: 1,
     margin: 3,
     borderWidth: 1,
     backgroundColor: 'white',
+  },
+  rowYoubi: {
+    flexDirection: 'row',
+    backgroundColor: 'yellow',
+  },
+  cellYoubi: {
+    flex: 1,
+    backgroundColor: 'white',
+    textAlign: 'center',
   },
 });
 
