@@ -2,18 +2,22 @@ import React from 'react';
 import {StyleSheet, Button, Text, TouchableOpacity, View} from 'react-native';
 
 interface CellProps {
-  dayNum: number;
+  day: number;
 }
 
-const cellTap = () => {
-  console.log('ボタンが押されました');
+const cellTap = (year: number, day: number) => {
+  console.log(`ボタンが押されました${year}年${day}日`);
+
+  // 画面遷移
 };
 
-const Cell: React.FC<CellProps> = ({dayNum}) => {
+const Cell: React.FC<CellProps> = ({day}) => {
   return (
     <View style={styles.cell}>
-      <Text style={styles.textDay}>{`${dayNum}`}</Text>
-      <TouchableOpacity style={styles.viewCell} onPress={cellTap}>
+      <Text style={styles.textDay}>{`${day}`}</Text>
+      <TouchableOpacity
+        style={styles.viewCell}
+        onPress={() => cellTap(2023, day)}>
         <View style={styles.row}>
           <Text style={styles.textRow} numberOfLines={1} ellipsizeMode="clip">
             ELLEGARDEN

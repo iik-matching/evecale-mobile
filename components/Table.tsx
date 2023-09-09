@@ -7,18 +7,20 @@ interface TableProps {
   month: number;
 }
 
+// 受け取った月が何曜日からスタートかを 月曜０ で取得
 const getFirstDayOfMonth = (year: number, month: number) => {
   let result = new Date(year, month - 1, 1).getDay() - 1;
   if (result == -1) {
     result = 6;
   }
-  console.log(`${year}年の${month}月は${result}曜日から`);
+  // console.log(`${year}年の${month}月は${result}曜日から`);
   return result;
 };
 
+// 受け取った月は何日までか
 const getDaysInMonth = (year: number, month: number) => {
   let result: number = new Date(year, month, 0).getDate();
-  console.log(`${year}年の${month}月は${result}日まで`);
+  // console.log(`${year}年の${month}月は${result}日まで`);
   return result;
 };
 
@@ -53,12 +55,12 @@ const Table: React.FC<TableProps> = ({year, month}) => {
           {Array.from({length: 7}).map((_, colIndex) => {
             if (dayCounter <= 0) {
               return (
-                <Cell dayNum={daysInPrevMonth + dayCounter++} key={colIndex} />
+                <Cell day={daysInPrevMonth + dayCounter++} key={colIndex} />
               );
             } else if (dayCounter <= daysInMonth) {
-              return <Cell dayNum={dayCounter++} key={colIndex} />;
+              return <Cell day={dayCounter++} key={colIndex} />;
             } else {
-              return <Cell dayNum={nextMonthDay++} key={colIndex} />;
+              return <Cell day={nextMonthDay++} key={colIndex} />;
             }
           })}
         </View>
