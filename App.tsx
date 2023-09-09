@@ -8,8 +8,13 @@ interface CellProps {
   dayNum: number;
 }
 interface TableProps {
-  monthNum: number;
+  year: number;
+  month: number;
 }
+
+const handleButtonPress = () => {
+  console.log('ボタンが押されました');
+};
 
 // ヘッダー
 const Header: React.FC<HeaderProps> = ({title}) => {
@@ -24,36 +29,43 @@ const Header: React.FC<HeaderProps> = ({title}) => {
 const Cell: React.FC<CellProps> = ({dayNum}) => {
   return (
     <View style={styles.cell}>
-      <Button title={`${dayNum}`} />
+      <Button title={`${dayNum}`} onPress={handleButtonPress} />
     </View>
   );
 };
 
-// // Table
-// const Talbe: React.FC<TableProps> = ({mounthNum}) => {
-//   return (
-//     <View style={styles.table}>
-//       {/* 6回繰り返す */}
-//       {Array.from({length: 6}).map((_, rowIndex) => (
-//         <View style={styles.row} key={rowIndex}>
-//           {/* 月〜金まで繰り返す */}
-//           {Array.from({length: 7}).map((_, colIndex) => (
-//             <Cell dayNum={rowIndex * 7 + colIndex + 1} />
-//           ))}
-//         </View>
-//       ))}
-//     </View>
-//   );
-// };
+// 特定の月の最初の日（すなわち1日）が何曜日であるかを取得する　月曜が0 ~ 日曜が1
+const getFirstDayOfMonth = (year: number, month: number) => {
+  let result = new Date(year, month - 1, 1).getDay() - 1;
+  // 日曜の場合
+  if (result == -1) {
+    result = 6;
+  }
 
-const getDaysInMonth = (month: number) => {
-  const date = new Date(2023, month, 0);
-  return date.getDate();
+  console.log(`${year}年の${month}月は${result}曜日から`);
+
+  return result;
 };
 
-const Table: React.FC<TableProps> = ({monthNum}) => {
-  const daysInMonth = getDaysInMonth(monthNum);
-  const weeks = Math.ceil(daysInMonth / 7);
+// 受け取った年と月で、最終日が人日までかを取得できる関数
+const getDaysInMonth = (year: number, month: number) => {
+  let result: number = new Date(year, month, 0).getDate();
+  console.log(`${year}年の${month}月は${result}日まで`);
+  return result;
+};
+
+const Table: React.FC<TableProps> = ({year, month}) => {
+  // 先月は何日までか
+  const daysInPrevMonth = getDaysInMonth(year, month - 1);
+  // 今月は何日までか
+  const daysInMonth = getDaysInMonth(year, month);
+  // 今月が何曜日からスタートかを 月曜０ で取得
+  const firstDayOfMonth = getFirstDayOfMonth(year, month);
+  // 表示する週の数
+  const weeks = 6;
+  // 今月用カウンタ
+  let dayCounter = 1 - firstDayOfMonth;
+  // 次月用カウンタ
   let nextMonthDay = 1;
 
   return (
@@ -61,10 +73,12 @@ const Table: React.FC<TableProps> = ({monthNum}) => {
       {Array.from({length: weeks}).map((_, rowIndex) => (
         <View style={styles.row} key={rowIndex}>
           {Array.from({length: 7}).map((_, colIndex) => {
-            const dayNum = rowIndex * 7 + colIndex + 1;
-
-            if (dayNum <= daysInMonth) {
-              return <Cell dayNum={dayNum} key={colIndex} />;
+            if (dayCounter <= 0) {
+              return (
+                <Cell dayNum={daysInPrevMonth + dayCounter++} key={colIndex} />
+              );
+            } else if (dayCounter <= daysInMonth) {
+              return <Cell dayNum={dayCounter++} key={colIndex} />;
             } else {
               return <Cell dayNum={nextMonthDay++} key={colIndex} />;
             }
@@ -76,10 +90,12 @@ const Table: React.FC<TableProps> = ({monthNum}) => {
 };
 
 const App = () => {
+  const year = 2023;
+  const month = 9;
   return (
     <View style={styles.container}>
-      <Header title="My Header" />
-      <Table monthNum={9} />
+      <Header title={`${year}年${month}月`} />
+      <Table year={year} month={month} />
     </View>
   );
 };
