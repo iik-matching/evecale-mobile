@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import Cell from './Cell'; // Cell コンポーネントをインポート
+import {useFocusEffect} from '@react-navigation/native';
 
 interface TableProps {
   year: number;
@@ -24,6 +25,16 @@ const getDaysInMonth = (year: number, month: number) => {
   return result;
 };
 
+type Event = {
+  id: string;
+  title: string;
+  event_date: Date;
+  place: string;
+  open_time: string;
+  start_time: string;
+  end_time: string;
+};
+
 const Table: React.FC<TableProps> = ({year, month}) => {
   // 先月は何日までか
   const daysInPrevMonth = getDaysInMonth(year, month - 1);
@@ -38,8 +49,48 @@ const Table: React.FC<TableProps> = ({year, month}) => {
   // 次月用カウンタ
   let nextMonthDay = 1;
 
+  const [events, setEvents] = useState<Event[]>([]);
+
+  async function fetchEvents() {
+    try {
+      const response = await fetch(
+        'http://192.168.3.9:3000/api/event-get?year=2023&month=9',
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+
+      const data: Event[] = await response.json();
+      setEvents(data);
+      // console.log(data.length);
+      // console.log(`id: ${data[0].id}`);
+      // console.log(`title: ${data[0].title}`);
+      // console.log(`event_date: ${new Date(data[0].event_date).getMonth()}`);
+      // console.log(`place: ${data[0].place}`);
+      // console.log(`open_time: ${data[0].open_time}`);
+      // console.log(`start_time: ${data[0].start_time}`);
+      // console.log(`end_time: ${data[0].end_time}`);
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('画面が表示されました');
+
+      // 関数の引数としてデータをとる
+      // node.jsでDBのモックを作る
+      fetchEvents();
+
+      return () => {};
+    }, []),
+  );
+
   return (
     <View style={styles.table}>
+      <Text>{`${events.length}`}</Text>
       <View style={styles.rowYoubi}>
         <Text style={styles.cellYoubi}>月</Text>
         <Text style={styles.cellYoubi}>火</Text>
