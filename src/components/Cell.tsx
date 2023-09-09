@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../App';
+import {RootStackParamList} from '../../App';
 
 interface CellProps {
   day: number;
@@ -13,7 +13,7 @@ const Cell: React.FC<CellProps> = ({day}) => {
   const cellTap = (year: number, day: number) => {
     console.log(`ボタンが押されました${year}年${day}日`);
     // 画面遷移
-    navigation.navigate('Page1');
+    navigation.navigate('Events');
   };
 
   return (
