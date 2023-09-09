@@ -1,25 +1,25 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import Header from './components/Header';
-import Table from './components/Table';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Home from './components/home';
+import Page1 from './components/page1';
 
-const App: React.FC = () => {
-  const year: number = 2023;
-  const month: number = 9;
-  return (
-    <View style={styles.container}>
-      <Header title={`${year}年${month}月`} />
-      <Table year={year} month={month} />
-    </View>
-  );
+export type RootStackParamList = {
+  Home: undefined;
+  Page1: undefined;
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 5,
-    display: 'flex',
-  },
-});
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Page1" component={Page1} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default App;

@@ -1,17 +1,21 @@
 import React from 'react';
-import {StyleSheet, Button, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../App';
 
 interface CellProps {
   day: number;
 }
 
-const cellTap = (year: number, day: number) => {
-  console.log(`ボタンが押されました${year}年${day}日`);
-
-  // 画面遷移
-};
-
 const Cell: React.FC<CellProps> = ({day}) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const cellTap = (year: number, day: number) => {
+    console.log(`ボタンが押されました${year}年${day}日`);
+    // 画面遷移
+    navigation.navigate('Page1');
+  };
+
   return (
     <View style={styles.cell}>
       <Text style={styles.textDay}>{`${day}`}</Text>
