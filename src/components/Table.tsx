@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, Dimensions} from 'react-native';
 import Cell from './Cell'; // Cell コンポーネントをインポート
 import {useFocusEffect} from '@react-navigation/native';
 import {getDaysInMonth, getFirstDayOfMonth} from '../tools';
@@ -103,9 +103,12 @@ const Table: React.FC<TableProps> = ({year, month}) => {
   );
 };
 
+const DEVICE_WIDTH = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   table: {
     flex: 1,
+    width: DEVICE_WIDTH,
   },
   row: {
     flex: 1,
