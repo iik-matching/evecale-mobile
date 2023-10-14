@@ -1,7 +1,7 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Calender from './src/pages/001_calendar';
+import Calender from './src/pages/001_home';
 import Events from './src/pages/002_events';
 
 export type RootStackParamList = {

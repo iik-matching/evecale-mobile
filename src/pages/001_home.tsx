@@ -8,13 +8,14 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import {GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
-import Header from '../components/Header';
-import Table from '../components/Table';
+import CalendarView from '../components/Calendar';
+import {getAdjustedDate} from '../tools';
 
 const Calender: React.FC = () => {
   const [year, setYear] = useState<number>(2023);
   const [month, setMonth] = useState<number>(9);
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const {year: prevYear, month: prevMonth} = getAdjustedDate(year, month - 1);
+  const {year: nextYear, month: nextMonth} = getAdjustedDate(year, month + 1);
   const scrollViewRef = useRef<ScrollView | null>(null);
 
   useEffect(() => {
@@ -24,23 +25,27 @@ const Calender: React.FC = () => {
     });
   }, []);
 
+  // スワイプを離した時
   const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const position = e.nativeEvent.contentOffset.x;
     const width = Dimensions.get('window').width;
 
+    // 前の月に進む場合
     if (position <= 0) {
-      setMonth(prev => (prev === 1 ? 12 : prev - 1));
+      setYear(prevYear);
+      setMonth(prevMonth);
+      //次の月に進む場合
     } else if (position >= width * 2) {
-      setMonth(prev => (prev === 12 ? 1 : prev + 1));
+      console.log(nextMonth);
+      setYear(nextYear);
+      setMonth(nextMonth);
     }
-
     scrollViewRef.current?.scrollTo({x: width, animated: false});
   };
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
-        <Header title={`${year}年${month}月`} />
         <Animated.ScrollView
           ref={scrollViewRef}
           horizontal
@@ -48,9 +53,9 @@ const Calender: React.FC = () => {
           scrollEventThrottle={16}
           onMomentumScrollEnd={handleScrollEnd}
           showsHorizontalScrollIndicator={false}>
-          <Table year={year} month={month - 1 <= 0 ? 12 : month - 1} />
-          <Table year={year} month={month} />
-          <Table year={year} month={month + 1 > 12 ? 1 : month + 1} />
+          <CalendarView year={prevYear} month={prevMonth} />
+          <CalendarView year={year} month={month} />
+          <CalendarView year={nextYear} month={nextMonth} />
         </Animated.ScrollView>
       </SafeAreaView>
     </GestureHandlerRootView>

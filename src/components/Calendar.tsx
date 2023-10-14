@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, Dimensions} from 'react-native';
-import Cell from './Cell'; // Cell コンポーネントをインポート
-import {useFocusEffect} from '@react-navigation/native';
+import Cell from './Cell';
 import {getDaysInMonth, getFirstDayOfMonth} from '../tools';
+import Header from './Header';
 
 interface TableProps {
   year: number;
@@ -19,29 +19,29 @@ type Event = {
   end_time: string;
 };
 
-const Table: React.FC<TableProps> = ({year, month}) => {
+const CalendarView: React.FC<TableProps> = ({year, month}) => {
   // 先月は何日までか
-  const daysInPrevMonth = getDaysInMonth(year, month - 1);
+  const MonthDaysBefore = getDaysInMonth(year, month - 1);
   // 今月は何日までか
-  const daysInMonth = getDaysInMonth(year, month);
+  const MonthDaysCurrent = getDaysInMonth(year, month);
   // 今月が何曜日からスタートかを 月曜０ で取得
   const firstDayOfMonth = getFirstDayOfMonth(year, month);
   // 表示する週の数
-  const weeks = 6;
-  // 今月用カウンタ
-  let dayCounter = 1 - firstDayOfMonth;
-  // 次月用カウンタ
-  let nextMonthDay = 1;
+  const CountWeeksDisplay = 6;
 
   const [events, setEvents] = useState<Event[]>([]);
 
   async function fetchEvents() {
     try {
+      console.log('リクエスト');
+
       const response = await fetch(
         'http://192.168.3.10:3000/api/event-get?year=2023&month=9',
       );
 
       if (response.ok) {
+        console.log('リクエストOK');
+        console.log(response);
         const data: Event[] = await response.json();
         setEvents(data);
         // console.log(data.length);
@@ -60,9 +60,14 @@ const Table: React.FC<TableProps> = ({year, month}) => {
     }
   }
 
-  useFocusEffect(
+  useEffect(
     React.useCallback(() => {
-      console.log('画面が表示されました');
+      console.log(`カレンダーコンポーネント表示 ${year} ${month}`);
+      console.log(`先月は何日までか ${MonthDaysBefore}`);
+      console.log(`今月は何日までか ${MonthDaysCurrent}`);
+      console.log(
+        `今月が何曜日からスタートかを 月曜０ で取得 ${firstDayOfMonth}`,
+      );
 
       // 関数の引数としてデータをとる
       // node.jsでDBのモックを作る
@@ -72,8 +77,13 @@ const Table: React.FC<TableProps> = ({year, month}) => {
     }, []),
   );
 
+  // カウンタ
+  let counterA = 1 - firstDayOfMonth;
+  let counterB = 1;
+
   return (
-    <View style={styles.table}>
+    <View style={styles.calender}>
+      <Header title={`${year}年${month}月`} />
       <View style={styles.rowYoubi}>
         <Text style={styles.cellYoubi}>月</Text>
         <Text style={styles.cellYoubi}>火</Text>
@@ -83,18 +93,16 @@ const Table: React.FC<TableProps> = ({year, month}) => {
         <Text style={styles.cellYoubi}>土</Text>
         <Text style={styles.cellYoubi}>日</Text>
       </View>
-      {/* 6週繰り返す */}
-      {Array.from({length: weeks}).map((_, rowIndex) => (
+      {Array.from({length: CountWeeksDisplay}).map((_, rowIndex) => (
         <View style={styles.row} key={rowIndex}>
           {Array.from({length: 7}).map((_, colIndex) => {
-            if (dayCounter <= 0) {
-              return (
-                <Cell day={daysInPrevMonth + dayCounter++} key={colIndex} />
-              );
-            } else if (dayCounter <= daysInMonth) {
-              return <Cell day={dayCounter++} key={colIndex} />;
+            // 先月分を表示する場合
+            if (counterA <= 0) {
+              return <Cell day={MonthDaysBefore + counterA++} key={colIndex} />;
+            } else if (counterA <= MonthDaysCurrent) {
+              return <Cell day={counterA++} key={colIndex} />;
             } else {
-              return <Cell day={nextMonthDay++} key={colIndex} />;
+              return <Cell day={counterB++} key={colIndex} />;
             }
           })}
         </View>
@@ -106,7 +114,7 @@ const Table: React.FC<TableProps> = ({year, month}) => {
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  table: {
+  calender: {
     flex: 1,
     width: DEVICE_WIDTH,
   },
@@ -131,4 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Table;
+export default CalendarView;
