@@ -27,25 +27,3 @@ export const getAdjustedDate = (year: number, month: number) => {
     return {year, month};
   }
 };
-
-// 指定された月のイベントを取得
-export async function getEvents(
-  year: number,
-  month: number,
-): Promise<EventData[]> {
-  try {
-    const response = await fetch(
-      `http://192.168.3.10:3000/api/event-get?year=${year}&month=${month}`,
-    );
-    if (response.ok) {
-      console.log('リクエストOK');
-      const data: EventData[] = await response.json();
-      return data; // 正常なデータを返す
-    } else {
-      throw new Error('Network response was not ok ' + response.statusText);
-    }
-  } catch (error) {
-    console.error('Fetch error:', error);
-    throw error; // ここでエラーを再スローします。呼び出し元でエラーハンドリングをすることを忘れないでください。
-  }
-}

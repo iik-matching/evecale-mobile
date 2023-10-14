@@ -9,53 +9,55 @@ import {
 } from 'react-native';
 import {GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
 import CalendarView from '../components/Calendar';
-import {getAdjustedDate, getEvents} from '../tools';
+import {getAdjustedDate} from '../tools';
 import {EventData} from '../type';
 
 const Home: React.FC = () => {
-  const currentDate = new Date();
-  const [month, setMonth] = useState<number>(currentDate.getMonth() + 1 + 1); // 真ん中のカレンダーを表示するため+1
+  // 初期表示年月
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const [month, setMonth] = useState<number>(new Date().getMonth() + 1);
 
-  const [year, setYear] = useState<number>(currentDate.getFullYear());
+  // 先月と来月を計算
   const {year: prevYear, month: prevMonth} = getAdjustedDate(year, month - 1);
   const {year: nextYear, month: nextMonth} = getAdjustedDate(year, month + 1);
-  const scrollViewRef = useRef<ScrollView | null>(null);
 
-  useEffect(() => {
-    scrollViewRef.current?.scrollTo({
-      x: Dimensions.get('window').width,
-      animated: false,
-    });
-  }, []);
-
+  // 先月今月来月
   const [events1, setEvents1] = useState<EventData[]>([]);
   const [events2, setEvents2] = useState<EventData[]>([]);
   const [events3, setEvents3] = useState<EventData[]>([]);
 
-  async function fetchEvents(
-    _year: number,
-    _month: number,
+  // 指定された月のイベントを取得
+  async function getEvents(
+    year: number,
+    month: number,
     updateFunction: React.Dispatch<React.SetStateAction<EventData[]>>,
   ) {
-    console.log('fetchEvents()');
     try {
-      const fetchedEvents = await getEvents(_year, _month);
-      updateFunction(fetchedEvents);
-      console.log(fetchedEvents);
+      const response = await fetch(
+        `http://192.168.3.10:3000/api/event-get?year=${year}&month=${month}`,
+      );
+      if (response.ok) {
+        console.log('リクエストOK');
+        const data: EventData[] = await response.json();
+        updateFunction(data);
+      } else {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error('Fetch error:', error);
     }
   }
+
   useEffect(() => {
-    fetchEvents(prevYear, prevMonth, setEvents1);
+    getEvents(prevYear, prevMonth, setEvents1);
   }, [prevYear, prevMonth]);
 
   useEffect(() => {
-    fetchEvents(year, month, setEvents2);
+    getEvents(year, month, setEvents2);
   }, [year, month]);
 
   useEffect(() => {
-    fetchEvents(nextYear, nextMonth, setEvents3);
+    getEvents(nextYear, nextMonth, setEvents3);
   }, [nextYear, nextMonth]);
 
   // スワイプを離した時
@@ -74,6 +76,14 @@ const Home: React.FC = () => {
     }
     scrollViewRef.current?.scrollTo({x: width, animated: false});
   };
+
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  useEffect(() => {
+    scrollViewRef.current?.scrollTo({
+      x: Dimensions.get('window').width,
+      animated: false,
+    });
+  }, []);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
