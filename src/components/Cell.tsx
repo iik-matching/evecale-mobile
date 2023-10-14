@@ -11,7 +11,7 @@ const Cell: React.FC<CellProps> = ({day}) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const cellTap = (year: number, day: number) => {
-    console.log(`ボタンが押されました${year}年${day}日`);
+    console.log(`セルがタップされました。${year}年${day}日`);
     // 画面遷移
     navigation.navigate('Events');
   };

@@ -2,28 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import Cell from './Cell'; // Cell コンポーネントをインポート
 import {useFocusEffect} from '@react-navigation/native';
+import {getDaysInMonth, getFirstDayOfMonth} from '../tools';
 
 interface TableProps {
   year: number;
   month: number;
 }
-
-// 受け取った月が何曜日からスタートかを 月曜０ で取得
-const getFirstDayOfMonth = (year: number, month: number) => {
-  let result = new Date(year, month - 1, 1).getDay() - 1;
-  if (result == -1) {
-    result = 6;
-  }
-  // console.log(`${year}年の${month}月は${result}曜日から`);
-  return result;
-};
-
-// 受け取った月は何日までか
-const getDaysInMonth = (year: number, month: number) => {
-  let result: number = new Date(year, month, 0).getDate();
-  // console.log(`${year}年の${month}月は${result}日まで`);
-  return result;
-};
 
 type Event = {
   id: string;
@@ -54,23 +38,23 @@ const Table: React.FC<TableProps> = ({year, month}) => {
   async function fetchEvents() {
     try {
       const response = await fetch(
-        'http://192.168.3.9:3000/api/event-get?year=2023&month=9',
+        'http://192.168.3.10:3000/api/event-get?year=2023&month=9',
       );
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data: Event[] = await response.json();
+        setEvents(data);
+        // console.log(data.length);
+        // console.log(`id: ${data[0].id}`);
+        // console.log(`title: ${data[0].title}`);
+        // console.log(`event_date: ${new Date(data[0].event_date).getMonth()}`);
+        // console.log(`place: ${data[0].place}`);
+        // console.log(`open_time: ${data[0].open_time}`);
+        // console.log(`start_time: ${data[0].start_time}`);
+        // console.log(`end_time: ${data[0].end_time}`);
+      } else {
         throw new Error('Network response was not ok ' + response.statusText);
       }
-
-      const data: Event[] = await response.json();
-      setEvents(data);
-      // console.log(data.length);
-      // console.log(`id: ${data[0].id}`);
-      // console.log(`title: ${data[0].title}`);
-      // console.log(`event_date: ${new Date(data[0].event_date).getMonth()}`);
-      // console.log(`place: ${data[0].place}`);
-      // console.log(`open_time: ${data[0].open_time}`);
-      // console.log(`start_time: ${data[0].start_time}`);
-      // console.log(`end_time: ${data[0].end_time}`);
     } catch (error) {
       console.error('Fetch error:', error);
     }
@@ -82,7 +66,7 @@ const Table: React.FC<TableProps> = ({year, month}) => {
 
       // 関数の引数としてデータをとる
       // node.jsでDBのモックを作る
-      fetchEvents();
+      // fetchEvents();
 
       return () => {};
     }, []),
@@ -90,7 +74,6 @@ const Table: React.FC<TableProps> = ({year, month}) => {
 
   return (
     <View style={styles.table}>
-      <Text>{`${events.length}`}</Text>
       <View style={styles.rowYoubi}>
         <Text style={styles.cellYoubi}>月</Text>
         <Text style={styles.cellYoubi}>火</Text>
