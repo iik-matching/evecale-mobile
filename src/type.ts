@@ -6,10 +6,5 @@ export type EventData = {
   open_time: string;
   start_time: string;
   end_time: string;
-};
-
-export type DateInfo = {
-  year: number;
-  month: number;
-  day: number;
+  performers: string;
 };

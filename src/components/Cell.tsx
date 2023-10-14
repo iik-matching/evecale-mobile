@@ -2,46 +2,59 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
-import {DateInfo} from '../type';
+import {EventData} from '../type';
 
-const Cell: React.FC<DateInfo> = dateInfo => {
+export type CellProps = {
+  year: number;
+  month: number;
+  day: number;
+  events: EventData[];
+};
+
+const Cell: React.FC<CellProps> = ({year, month, day, events}) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const cellTap = () => {
-    console.log(
-      `セルがタップされました。${dateInfo.year}年${dateInfo.month}月${dateInfo.day}日`,
-    );
+    console.log(`セルがタップされました。${year}年${month}月${day}日`);
     // 画面遷移
     navigation.navigate('Events', {
-      dateInfo: dateInfo,
+      year: year,
+      month: month,
+      day: day,
     });
   };
 
+  // 今日だったら赤くする
   const currentDate = new Date();
   const isToday =
-    dateInfo.year === currentDate.getFullYear() &&
-    dateInfo.month === currentDate.getMonth() + 1 && // 注意: JavaScriptのgetMonth()は0から始まる
-    dateInfo.day === currentDate.getDate();
+    year === currentDate.getFullYear() &&
+    month === currentDate.getMonth() + 1 && // 注意: JavaScriptのgetMonth()は0から始まる
+    day === currentDate.getDate();
   const textDayStyle = isToday ? styles.textDayRed : styles.textDayGreen;
+
   return (
     <View style={styles.cell}>
-      <Text style={textDayStyle}>{`${dateInfo.day}`}</Text>
+      <Text style={textDayStyle}>{`${day}`}</Text>
       <TouchableOpacity style={styles.viewCell} onPress={() => cellTap()}>
-        <View style={styles.row}>
-          <Text style={styles.textRow} numberOfLines={1} ellipsizeMode="clip">
-            ELLEGARDEN
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.textRow} numberOfLines={1} ellipsizeMode="clip">
-            oneokRock
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.textRow} numberOfLines={1} ellipsizeMode="clip">
-            uverworld
-          </Text>
-        </View>
+        {events
+          .filter(event => {
+            const eventDate = new Date(event.event_date); // event.start_dateがDate型であると仮定
+            return (
+              eventDate.getFullYear() === year &&
+              eventDate.getMonth() === month - 1 && // JavaScriptの月は0-11なので、1を引きます。
+              eventDate.getDate() === day
+            );
+          })
+          .map(event => (
+            <View key={event.id} style={styles.row}>
+              <Text
+                style={styles.textRow}
+                numberOfLines={1}
+                ellipsizeMode="clip">
+                {event.title}
+              </Text>
+            </View>
+          ))}
       </TouchableOpacity>
     </View>
   );

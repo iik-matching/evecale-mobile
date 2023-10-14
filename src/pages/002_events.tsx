@@ -8,7 +8,7 @@ import Header from '../components/Header';
 type Props = NativeStackScreenProps<RootStackParamList, 'Events'>;
 
 const Events: React.FC<Props> = ({route, navigation}) => {
-  const {dateInfo} = route.params;
+  const {year, month, day} = route.params;
 
   //次の画面へ
   function Tap() {
@@ -18,9 +18,7 @@ const Events: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        title={`${dateInfo.year}年${dateInfo.month}月${dateInfo.day}日`}
-      />
+      <Header title={`${year}年${month}月${day}日`} />
       <Text style={styles.greeting}>ELLEGARDEN</Text>
       <Text style={styles.greeting}>One Ok Rock</Text>
       <Button title="カレンダーに戻る" onPress={Tap} />

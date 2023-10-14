@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, Dimensions} from 'react-native';
 import Cell from './Cell';
-import {getDaysInMonth, getFirstDayOfMonth} from '../tools';
+import {getAdjustedDate, getDaysInMonth, getFirstDayOfMonth} from '../tools';
 import Header from './Header';
 import {EventData} from '../type';
 
 interface CalendarProps {
   year: number;
   month: number;
+  events: EventData[];
 }
 
-const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
+const CalendarView: React.FC<CalendarProps> = ({year, month, events}) => {
   // 先月は何日までか
   const MonthDaysBefore = getDaysInMonth(year, month - 1);
   // 今月は何日までか
@@ -20,54 +21,12 @@ const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
   // 表示する週の数
   const CountWeeksDisplay = 6;
 
-  const [events, setEvents] = useState<EventData[]>([]);
-
-  async function fetchEvents() {
-    try {
-      console.log('リクエスト');
-
-      const response = await fetch(
-        'http://192.168.3.10:3000/api/event-get?year=2023&month=9',
-      );
-
-      if (response.ok) {
-        console.log('リクエストOK');
-        console.log(response);
-        const data: EventData[] = await response.json();
-        setEvents(data);
-        // console.log(data.length);
-        // console.log(`id: ${data[0].id}`);
-        // console.log(`title: ${data[0].title}`);
-        // console.log(`event_date: ${new Date(data[0].event_date).getMonth()}`);
-        // console.log(`place: ${data[0].place}`);
-        // console.log(`open_time: ${data[0].open_time}`);
-        // console.log(`start_time: ${data[0].start_time}`);
-        // console.log(`end_time: ${data[0].end_time}`);
-      } else {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-    }
+  console.log(`カレンダーコンポーネント表示 ${year} ${month}`);
+  if (events.length > 0) {
+    console.log(events[0].title);
+    console.log(events[0].event_date);
+    console.log(events[0].performers.split(','));
   }
-
-  useEffect(
-    React.useCallback(() => {
-      console.log(`カレンダーコンポーネント表示 ${year} ${month}`);
-      console.log(`先月は何日までか ${MonthDaysBefore}`);
-      console.log(`今月は何日までか ${MonthDaysCurrent}`);
-      console.log(
-        `今月が何曜日からスタートかを 月曜０ で取得 ${firstDayOfMonth}`,
-      );
-
-      // 関数の引数としてデータをとる
-      // node.jsでDBのモックを作る
-      // fetchEvents();
-
-      return () => {};
-    }, []),
-  );
-
   // カウンタ
   let counterA = 1 - firstDayOfMonth;
   let counterB = 1;
@@ -91,9 +50,10 @@ const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
             if (counterA <= 0) {
               return (
                 <Cell
-                  year={year}
-                  month={month}
+                  year={getAdjustedDate(year, month - 1).year}
+                  month={getAdjustedDate(year, month - 1).month}
                   day={MonthDaysBefore + counterA++}
+                  events={events}
                   key={colIndex}
                 />
               );
@@ -103,15 +63,17 @@ const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
                   year={year}
                   month={month}
                   day={counterA++}
+                  events={events}
                   key={colIndex}
                 />
               );
             } else {
               return (
                 <Cell
-                  year={year}
-                  month={month}
+                  year={getAdjustedDate(year, month + 1).year}
+                  month={getAdjustedDate(year, month + 1).month}
                   day={counterB++}
+                  events={events}
                   key={colIndex}
                 />
               );

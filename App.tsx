@@ -3,10 +3,11 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './src/pages/001_home';
 import Events from './src/pages/002_events';
-import {DateInfo} from './src/type';
 
 type EventsProps = {
-  dateInfo: DateInfo;
+  year: number;
+  month: number;
+  day: number;
 };
 
 export type RootStackParamList = {
