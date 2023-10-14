@@ -11,9 +11,11 @@ import {GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
 import CalendarView from '../components/Calendar';
 import {getAdjustedDate} from '../tools';
 
-const Calender: React.FC = () => {
-  const [year, setYear] = useState<number>(2023);
-  const [month, setMonth] = useState<number>(9);
+const Home: React.FC = () => {
+  const currentDate = new Date();
+  const [year, setYear] = useState<number>(currentDate.getFullYear());
+  const [month, setMonth] = useState<number>(currentDate.getMonth() + 1 + 1); // 真ん中のカレンダーを表示するため+1
+
   const {year: prevYear, month: prevMonth} = getAdjustedDate(year, month - 1);
   const {year: nextYear, month: nextMonth} = getAdjustedDate(year, month + 1);
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -70,4 +72,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Calender;
+export default Home;

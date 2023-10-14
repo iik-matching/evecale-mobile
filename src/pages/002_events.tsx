@@ -7,20 +7,20 @@ import Header from '../components/Header';
 //お決まり
 type Props = NativeStackScreenProps<RootStackParamList, 'Events'>;
 
-const Events: React.FC<Props> = ({navigation}) => {
-  const year = 2023;
-  const month = 9;
-  const day = 22;
+const Events: React.FC<Props> = ({route, navigation}) => {
+  const {dateInfo} = route.params;
 
   //次の画面へ
   function Tap() {
     //Propsを渡しながら画面遷移
-    navigation.navigate('Calender');
+    navigation.navigate('Home');
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={`${year}年${month}月`} />
+      <Header
+        title={`${dateInfo.year}年${dateInfo.month}月${dateInfo.day}日`}
+      />
       <Text style={styles.greeting}>ELLEGARDEN</Text>
       <Text style={styles.greeting}>One Ok Rock</Text>
       <Button title="カレンダーに戻る" onPress={Tap} />

@@ -3,23 +3,14 @@ import {StyleSheet, View, Text, Dimensions} from 'react-native';
 import Cell from './Cell';
 import {getDaysInMonth, getFirstDayOfMonth} from '../tools';
 import Header from './Header';
+import {EventData} from '../type';
 
-interface TableProps {
+interface CalendarProps {
   year: number;
   month: number;
 }
 
-type Event = {
-  id: string;
-  title: string;
-  event_date: Date;
-  place: string;
-  open_time: string;
-  start_time: string;
-  end_time: string;
-};
-
-const CalendarView: React.FC<TableProps> = ({year, month}) => {
+const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
   // 先月は何日までか
   const MonthDaysBefore = getDaysInMonth(year, month - 1);
   // 今月は何日までか
@@ -29,7 +20,7 @@ const CalendarView: React.FC<TableProps> = ({year, month}) => {
   // 表示する週の数
   const CountWeeksDisplay = 6;
 
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventData[]>([]);
 
   async function fetchEvents() {
     try {
@@ -42,7 +33,7 @@ const CalendarView: React.FC<TableProps> = ({year, month}) => {
       if (response.ok) {
         console.log('リクエストOK');
         console.log(response);
-        const data: Event[] = await response.json();
+        const data: EventData[] = await response.json();
         setEvents(data);
         // console.log(data.length);
         // console.log(`id: ${data[0].id}`);
@@ -98,11 +89,32 @@ const CalendarView: React.FC<TableProps> = ({year, month}) => {
           {Array.from({length: 7}).map((_, colIndex) => {
             // 先月分を表示する場合
             if (counterA <= 0) {
-              return <Cell day={MonthDaysBefore + counterA++} key={colIndex} />;
+              return (
+                <Cell
+                  year={year}
+                  month={month}
+                  day={MonthDaysBefore + counterA++}
+                  key={colIndex}
+                />
+              );
             } else if (counterA <= MonthDaysCurrent) {
-              return <Cell day={counterA++} key={colIndex} />;
+              return (
+                <Cell
+                  year={year}
+                  month={month}
+                  day={counterA++}
+                  key={colIndex}
+                />
+              );
             } else {
-              return <Cell day={counterB++} key={colIndex} />;
+              return (
+                <Cell
+                  year={year}
+                  month={month}
+                  day={counterB++}
+                  key={colIndex}
+                />
+              );
             }
           })}
         </View>

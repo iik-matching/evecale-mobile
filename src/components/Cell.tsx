@@ -2,26 +2,27 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
+import {DateInfo} from '../type';
 
-interface CellProps {
-  day: number;
-}
-
-const Cell: React.FC<CellProps> = ({day}) => {
+const Cell: React.FC<DateInfo> = ({year, month, day}) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const cellTap = (year: number, day: number) => {
-    console.log(`セルがタップされました。${year}年${day}日`);
+  const cellTap = () => {
+    console.log(`セルがタップされました。${year}年${month}月${day}日`);
     // 画面遷移
-    navigation.navigate('Events');
+    navigation.navigate('Events', {
+      dateInfo: {
+        year: year,
+        month: month,
+        day: day,
+      },
+    });
   };
 
   return (
     <View style={styles.cell}>
       <Text style={styles.textDay}>{`${day}`}</Text>
-      <TouchableOpacity
-        style={styles.viewCell}
-        onPress={() => cellTap(2023, day)}>
+      <TouchableOpacity style={styles.viewCell} onPress={() => cellTap()}>
         <View style={styles.row}>
           <Text style={styles.textRow} numberOfLines={1} ellipsizeMode="clip">
             ELLEGARDEN
