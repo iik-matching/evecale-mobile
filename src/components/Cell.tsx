@@ -4,24 +4,28 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
 import {DateInfo} from '../type';
 
-const Cell: React.FC<DateInfo> = ({year, month, day}) => {
+const Cell: React.FC<DateInfo> = dateInfo => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const cellTap = () => {
-    console.log(`セルがタップされました。${year}年${month}月${day}日`);
+    console.log(
+      `セルがタップされました。${dateInfo.year}年${dateInfo.month}月${dateInfo.day}日`,
+    );
     // 画面遷移
     navigation.navigate('Events', {
-      dateInfo: {
-        year: year,
-        month: month,
-        day: day,
-      },
+      dateInfo: dateInfo,
     });
   };
 
+  const currentDate = new Date();
+  const isToday =
+    dateInfo.year === currentDate.getFullYear() &&
+    dateInfo.month === currentDate.getMonth() + 1 && // 注意: JavaScriptのgetMonth()は0から始まる
+    dateInfo.day === currentDate.getDate();
+  const textDayStyle = isToday ? styles.textDayRed : styles.textDayGreen;
   return (
     <View style={styles.cell}>
-      <Text style={styles.textDay}>{`${day}`}</Text>
+      <Text style={textDayStyle}>{`${dateInfo.day}`}</Text>
       <TouchableOpacity style={styles.viewCell} onPress={() => cellTap()}>
         <View style={styles.row}>
           <Text style={styles.textRow} numberOfLines={1} ellipsizeMode="clip">
@@ -51,8 +55,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     textAlign: 'center',
   },
-  textDay: {
+  textDayGreen: {
     backgroundColor: 'green',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  textDayRed: {
+    backgroundColor: 'red',
     textAlign: 'center',
     fontWeight: 'bold',
   },
