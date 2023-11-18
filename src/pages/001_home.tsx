@@ -21,44 +21,43 @@ const Home: React.FC = () => {
   const {year: prevYear, month: prevMonth} = getAdjustedDate(year, month - 1);
   const {year: nextYear, month: nextMonth} = getAdjustedDate(year, month + 1);
 
-  // 先月今月来月
-  const [events1, setEvents1] = useState<EventData[]>([]);
-  const [events2, setEvents2] = useState<EventData[]>([]);
-  const [events3, setEvents3] = useState<EventData[]>([]);
+  // // 先月今月来月
+  // const [events1, setEvents1] = useState<EventData[]>([]);
+  // const [events2, setEvents2] = useState<EventData[]>([]);
+  // const [events3, setEvents3] = useState<EventData[]>([]);
 
-  // 指定された月のイベントを取得
-  async function getEvents(
-    year: number,
-    month: number,
-    updateFunction: React.Dispatch<React.SetStateAction<EventData[]>>,
-  ) {
-    try {
-      const response = await fetch(
-        `http://192.168.3.10:3000/api/event-get?year=${year}&month=${month}`,
-      );
-      if (response.ok) {
-        console.log('リクエストOK');
-        const data: EventData[] = await response.json();
-        updateFunction(data);
-      } else {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-    }
-  }
+  // // 指定された月のイベントを取得
+  // async function getEvents(
+  //   year: number,
+  //   month: number,
+  //   updateFunction: React.Dispatch<React.SetStateAction<EventData[]>>,
+  // ) {
+  //   try {
+  //     const response = await fetch(
+  //       `http://192.168.3.2:3000/api/event-get?year=${year}&month=${month}`,
+  //     );
+  //     if (response.ok) {
+  //       const data: EventData[] = await response.json();
+  //       updateFunction(data);
+  //     } else {
+  //       throw new Error('Network response was not ok ' + response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error('Fetch error:', error);
+  //   }
+  // }
 
-  useEffect(() => {
-    getEvents(prevYear, prevMonth, setEvents1);
-  }, [prevYear, prevMonth]);
+  // useEffect(() => {
+  //   getEvents(prevYear, prevMonth, setEvents1);
+  // }, [prevYear, prevMonth]);
 
-  useEffect(() => {
-    getEvents(year, month, setEvents2);
-  }, [year, month]);
+  // useEffect(() => {
+  //   getEvents(year, month, setEvents2);
+  // }, [year, month]);
 
-  useEffect(() => {
-    getEvents(nextYear, nextMonth, setEvents3);
-  }, [nextYear, nextMonth]);
+  // useEffect(() => {
+  //   getEvents(nextYear, nextMonth, setEvents3);
+  // }, [nextYear, nextMonth]);
 
   // スワイプを離した時
   const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -95,9 +94,9 @@ const Home: React.FC = () => {
           scrollEventThrottle={16}
           onMomentumScrollEnd={handleScrollEnd}
           showsHorizontalScrollIndicator={false}>
-          <CalendarView year={prevYear} month={prevMonth} events={events1} />
-          <CalendarView year={year} month={month} events={events2} />
-          <CalendarView year={nextYear} month={nextMonth} events={events3} />
+          <CalendarView year={prevYear} month={prevMonth} />
+          <CalendarView year={year} month={month} />
+          <CalendarView year={nextYear} month={nextMonth} />
         </Animated.ScrollView>
       </SafeAreaView>
     </GestureHandlerRootView>

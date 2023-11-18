@@ -8,10 +8,9 @@ import {EventData} from '../type';
 interface CalendarProps {
   year: number;
   month: number;
-  events: EventData[];
 }
 
-const CalendarView: React.FC<CalendarProps> = ({year, month, events}) => {
+const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
   // 先月は何日までか
   const MonthDaysBefore = getDaysInMonth(year, month - 1);
   // 今月は何日までか
@@ -21,15 +20,35 @@ const CalendarView: React.FC<CalendarProps> = ({year, month, events}) => {
   // 表示する週の数
   const CountWeeksDisplay = 6;
 
-  console.log(`カレンダーコンポーネント表示 ${year} ${month}`);
-  if (events.length > 0) {
-    console.log(events[0].title);
-    console.log(events[0].event_date);
-    console.log(events[0].performers.split(','));
-  }
+  // 先月今月来月
+  const [events, setEvents] = useState<EventData[]>([]);
+
   // カウンタ
   let counterA = 1 - firstDayOfMonth;
   let counterB = 1;
+
+  console.log('表示じゃ', year, month);
+
+  // 指定された月のイベントを取得
+  async function getEvents(year: number, month: number) {
+    try {
+      const response = await fetch(
+        `http://192.168.3.2:3000/api/event-get?year=${year}&month=${month}`,
+      );
+      if (response.ok) {
+        const data: EventData[] = await response.json();
+        setEvents(data);
+      } else {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  }
+
+  useEffect(() => {
+    getEvents(year, month);
+  }, [year, month]);
 
   return (
     <View style={styles.calender}>
