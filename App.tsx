@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './src/pages/001_home';
 import Events from './src/pages/002_events';
+import Filter from './src/pages/003_filter';
+import Header from './src/components/Header';
 
 type EventsProps = {
   year: number;
@@ -13,6 +15,7 @@ type EventsProps = {
 export type RootStackParamList = {
   Home: undefined;
   Events: EventsProps;
+  Filter: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -23,6 +26,7 @@ const App = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Events" component={Events} />
+        <Stack.Screen name="Filter" component={Filter} />
       </Stack.Navigator>
     </NavigationContainer>
   );

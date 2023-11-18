@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, Dimensions, ScrollView} from 'react-native';
 import CalendarView from '../components/Calendar';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
@@ -33,23 +34,30 @@ const Home: React.FC = () => {
   };
 
   return (
-    <ScrollView
-      horizontal={true}
-      pagingEnabled={true}
-      onMomentumScrollEnd={handleScroll}
-      showsHorizontalScrollIndicator={false}
-      style={{flex: 1}}>
-      {pages.map(pageNum => (
-        <CalendarView
-          key={pageNum}
-          year={getPageYear(pageNum)}
-          month={getPageMonth(pageNum)}
-        />
-      ))}
-    </ScrollView>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        horizontal={true}
+        pagingEnabled={true}
+        onMomentumScrollEnd={handleScroll}
+        showsHorizontalScrollIndicator={false}
+        style={{flex: 1}}>
+        {pages.map(pageNum => (
+          <CalendarView
+            key={pageNum}
+            year={getPageYear(pageNum)}
+            month={getPageMonth(pageNum)}
+          />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    display: 'flex',
+  },
+});
 
 export default Home;

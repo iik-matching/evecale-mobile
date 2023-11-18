@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: 'white',
     textAlign: 'center',
+    overflow: 'hidden',
   },
   textDayGreen: {
     backgroundColor: 'green',

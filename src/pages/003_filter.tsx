@@ -5,11 +5,9 @@ import {RootStackParamList} from '../../App';
 import Header from '../components/Header';
 
 //お決まり
-type Props = NativeStackScreenProps<RootStackParamList, 'Events'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Filter'>;
 
-const Events: React.FC<Props> = ({route, navigation}) => {
-  const {year, month, day} = route.params;
-
+const Filter: React.FC<Props> = ({route, navigation}) => {
   //次の画面へ
   function Tap() {
     //Propsを渡しながら画面遷移
@@ -18,9 +16,10 @@ const Events: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={`${year}年${month}月${day}日`} />
-      <Text style={styles.greeting}>ELLEGARDEN</Text>
-      <Text style={styles.greeting}>One Ok Rock</Text>
+      <Header title={`setting`} />
+      <Text style={styles.greeting}>
+        この画面では検索ボックスなどを駆使して、 filteringできます。
+      </Text>
       <Button title="カレンダーに戻る" onPress={Tap} />
     </SafeAreaView>
   );
@@ -38,4 +37,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Events;
+export default Filter;
