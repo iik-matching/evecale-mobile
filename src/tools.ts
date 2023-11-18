@@ -29,20 +29,42 @@ export const getAdjustedDate = (year: number, month: number) => {
 };
 
 // --------- api ---------
+const useMoc = true;
+const serverURI = 'http://192.168.3.2:3000/';
+const mocURI = 'http://localhost:3000/';
+
+function getBaseURL() {
+  if (useMoc) return mocURI;
+  return serverURI;
+}
 
 // 指定された月のイベントを取得
 export async function getEvents(year: number, month: number) {
-  let result: EventData[] = [];
+  let result;
+  const url = `${getBaseURL()}api/event-get?year=${year}&month=${month}`;
   try {
-    const response = await fetch(
-      `http://192.168.3.2:3000/api/event-get?year=${year}&month=${month}`,
-    );
+    const response = await fetch(url);
     if (response.ok) {
       result = await response.json();
-      console.log(
-        `http://192.168.3.2:3000/api/event-get?year=${year}&month=${month}`,
-        result.length,
-      );
+      console.log(url);
+    } else {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+  return result;
+}
+
+//
+export async function getFilter(year: number, month: number) {
+  let result;
+  const url = `${getBaseURL()}api/filter`;
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      result = await response.json();
+      console.log(url);
     } else {
       throw new Error('Network response was not ok ' + response.statusText);
     }

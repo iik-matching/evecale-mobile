@@ -35,7 +35,8 @@ const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
   useEffect(() => {
     // 非同期処理を行うための関数を定義
     const fetchData = async () => {
-      let events: EventData[] = await getEvents(year, month);
+      let data = await getEvents(year, month);
+      let events: EventData[] = data.events;
       setEvents(events);
     };
     fetchData();
