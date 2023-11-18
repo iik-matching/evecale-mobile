@@ -1,7 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, Dimensions} from 'react-native';
 import Cell from './Cell';
-import {getAdjustedDate, getDaysInMonth, getFirstDayOfMonth} from '../tools';
+import {
+  getAdjustedDate,
+  getDaysInMonth,
+  getEvents,
+  getFirstDayOfMonth,
+} from '../tools';
 import Header from './Header';
 import {EventData} from '../type';
 
@@ -27,27 +32,13 @@ const CalendarView: React.FC<CalendarProps> = ({year, month}) => {
   let counterA = 1 - firstDayOfMonth;
   let counterB = 1;
 
-  console.log('表示じゃ', year, month);
-
-  // 指定された月のイベントを取得
-  async function getEvents(year: number, month: number) {
-    try {
-      const response = await fetch(
-        `http://192.168.3.2:3000/api/event-get?year=${year}&month=${month}`,
-      );
-      if (response.ok) {
-        const data: EventData[] = await response.json();
-        setEvents(data);
-      } else {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-    }
-  }
-
   useEffect(() => {
-    getEvents(year, month);
+    // 非同期処理を行うための関数を定義
+    const fetchData = async () => {
+      let events: EventData[] = await getEvents(year, month);
+      setEvents(events);
+    };
+    fetchData();
   }, [year, month]);
 
   return (
